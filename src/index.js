@@ -49,7 +49,7 @@ app.post("/cart/", (req, res, next) => {
 });
 
 app.put("/cart/:cartId/", (req, res, next) => {
-	// Updates cart with body data; product id and quantity
+	// Updates status of the cart
 	var cartId = req.params.cartId
 	try {
 		var status = req.body.status;
