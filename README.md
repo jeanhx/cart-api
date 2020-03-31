@@ -29,4 +29,7 @@ Cart workflow is located in the `docs` dir, both a PlantUML as well as the resul
 
 ### Api Endpoints
 * localhost:3000/inventory - Get only; View available inventory
-* localhost:3000/cart - Get, Post, Put, Delete; View a cart, initialize a cart, Update cart status, Delete the cart
+* localhost:3000/cart - Get, Post; View all carts, initialize a cart and return id
+* localhost:3000/cart/:cartId/ - Get, Put, Delete; View a cart, Update a cart's status, and Delete the cart
+* localhost:3000/cart/:cartId/product/:productId/ - Get, Put, Delete; View a product inside a cart, Add a product to the cart, Update the quantity of products in the cart, and Delete product in the cart
+  * quantity is sent in via data payload in the body
