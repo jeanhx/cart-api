@@ -17,10 +17,6 @@ This assignment is to build out a RESTful shopping cart API.
 
 Products for the cart in the `products.json` file in the `/src` dir of the repo.  The products will be a known so that you do not have to reproduce that lookup, so the products in the JSON file are the only valid products for this API.
 
-### Cart Workflow
-
-Cart workflow is located in the `docs` dir, both a PlantUML as well as the resultant flow.
-
 ### Workflow Rules
 
 * A cart cannot be created and then checked out, a **MINIMUM** of five products must be in the cart for that cart to be Validated
@@ -45,3 +41,4 @@ Cart workflow is located in the `docs` dir, both a PlantUML as well as the resul
 * Add a tests
 * Add a way to associate carts with api requests so remembering id's could just be a fall back
 * Add more error handling
+* Add chart workflow doc

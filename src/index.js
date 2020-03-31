@@ -170,6 +170,7 @@ app.get("/cart/:cartId/checkout/", (req, res, next) => {
     // Checkout the cart
     var cartId = req.params.cartId;
     var can_checkout = true;
+    var items = 0;
     if (!carts.hasOwnProperty(cartId)){
         res.status(404);
         res.json({"error": "could not find cart or product"});
@@ -180,8 +181,9 @@ app.get("/cart/:cartId/checkout/", (req, res, next) => {
                 can_checkout = false;
                 break;
             }
+            items += 1;
         }
-        if (can_checkout){
+        if (can_checkout && items > 4){
             // If can checkout, remove the products from inventory and remove cart
             carts[cartId].status = 'Ordered';
             for (var productId in carts[cartId].products){
