@@ -4,6 +4,9 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.listen(3000);
 
+var uuid = require("uuid")
+var carts = {}
+
 // Initialize product dictionary
 var inventory_json = require('./products.json')
 var inventory = {}
@@ -24,38 +27,47 @@ app.get('/inventory', function (req, res) {
 	res.json(inventory)
 })
 
-app.get("/cart/", (req, res, next) => {
-	// Return cart
+app.get("/cart/:cartId/", (req, res, next) => {
+	// Return cart with matching id
+	cartId = req.params.cartId;
 	res.json({
-		'status': cart.status,
-		'products': cart.products
+		'status': carts[cartId].status,
+		'products': carts[cartId].products
 	});
 });
 
+app.get('/cart', function (req, res) {
+	// Return a list of all carts
+	res.json(carts)
+})
+
 app.post("/cart/", (req, res, next) => {
-	// Create a new cart
-	cart = new Cart();
+	// Create a new cart and return id
+	cartId = uuid.v4();
+	carts[cartId] = new Cart(cartId);
+	res.json(cartId);
 });
 
-app.put("/cart/", (req, res, next) => {
+app.put("/cart/:cartId/", (req, res, next) => {
 	// Updates cart with body data; product id and quantity
+	var cartId = req.params.cartId
 	try {
 		var status = req.body.status;
 	}
 	catch(err){
 		res.json({'error': 'status not found'})
 	}
-	cart.status = status
+	carts[cartId].status = status
 	res.json({'success': 'cart status updated'})
 });
 
-app.delete("/cart/", (req, res, next) => {
-	// Deletes cart
+app.delete("/cart/:cartId/", (req, res, next) => {
+	// Deletes cart from cart dictionary
 	var cartId = req.params.cartId
-	try{
-		cart = '';
+	if (carts.hasOwnProperty(cartId)){
+		delete carts[cartId];
 		res.json({'success': 'removed'});
-	} catch(err) {
+	} else {
 		res.json({'error': 'could not find cart'});
 	}
 });
