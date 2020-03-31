@@ -1,0 +1,53 @@
+{
+  "name": "gopuff-backend-assessment",
+  "version": "1.0.0",
+  "description": "node.js API and build assessment",
+  "main": "index.js",
+  "scripts": {
+    "start": "node <<xxxx.js>>",
+    "start:dev": "NODE_ENV=dev babel-node <<xxxx.js>>",
+    "start:prod": "NODE_ENV=prod npm run start",
+    "lint": "standard",
+    "test": "test",
+    "watch": "nodemon",
+    "build": "babel ./src --out-dir dist",
+    "postbuild": "cp -R node_modules ./dist/node_modules && cp ./package.json ./dist/package.json"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/node": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.7.2",
+    "nodemon": "^2.0.1",
+    "npm-run-all": "^3.1.2",
+    "standard": "^14.3.1",
+    "rimraf": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeanhx/candidate-api-assessments.git"
+  },
+  "author": "goPuff",
+  "license": "MIT",
+  "engines": {
+    "node": "12.13.0"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "env": []
+  },
+  "nodemonConfig": {
+    "exec": "npm run start:dev",
+    "watch": [
+      "src/**/*"
+    ],
+    "ext": "js, json",
+    "ignore": [
+      ".git",
+      "node_modules/**/node_modules"
+    ]
+  }
+}
