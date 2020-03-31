@@ -25,20 +25,32 @@ function Product() {
     this.quantity = 0;
 }
 
-app.get("/inventory", function (req, res) {
+app.get("/inventory/", function (req, res) {
     // Return a list of all carts
     res.json(inventory);
 });
 
+app.get("/inventory/:productId/", function (req, res) {
+    // Return a single product
+    var productId = req.params.productId;
+    if (inventory.hasOwnProperty(productId)){
+        res.json(inventory[req.params.productId]);
+    } else {
+        res.status(404);
+        res.json({"error": "could not find product"});
+    }
+});
+
 app.get("/cart/:cartId/", (req, res, next) => {
     // Return cart with matching id
-    cartId = req.params.cartId;
+    var cartId = req.params.cartId;
     if (carts.hasOwnProperty(cartId)){
         res.json({
             "status": carts[cartId].status,
             "products": carts[cartId].products
         });
     } else {
+        res.status(404);
         res.json({"error": "could not find cart"});
     }
 });
@@ -50,8 +62,9 @@ app.get("/cart/", function (req, res) {
 
 app.post("/cart/", (req, res, next) => {
     // Create a new cart and return id
-    cartId = uuid.v4();
+    var cartId = uuid.v4();
     carts[cartId] = new Cart(cartId);
+    res.status(201);
     res.json(cartId);
 });
 
@@ -75,6 +88,7 @@ app.delete("/cart/:cartId/", (req, res, next) => {
         delete carts[cartId];
         res.json({"success": "removed"});
     } else {
+        res.status(404);
         res.json({"error": "could not find cart"});
     }
 });
@@ -94,9 +108,11 @@ app.post("/cart/:cartId/product/:productId/", (req, res, next) => {
         var quantity = req.body.quantity;
     }
     catch(err){
+        res.status(400);
         res.json({"error": "quantity not found in body"});
     }
     if (inventory.hasOwnProperty(productId) && quantity>inventory[productId].quantity){
+        res.status(400);
         res.json({"error": "not enough products in inventory to satisfy request"});
     } else {
         if (carts.hasOwnProperty(cartId)){
@@ -106,6 +122,7 @@ app.post("/cart/:cartId/product/:productId/", (req, res, next) => {
             carts[cartId].products[productId] = product;
             res.json({"success": "updated"});
         } else {
+            res.status(404);
             res.json({"error": "could not find cart or product"});
         }
     }
@@ -119,15 +136,18 @@ app.put("/cart/:cartId/product/:productId/", (req, res, next) => {
         var quantity = req.body.quantity;
     }
     catch(err){
+        res.status(400);
         res.json({"error": "quantity not found in body"});
     }
     if (inventory.hasOwnProperty(productId) && quantity>inventory[productId].quantity){
+        res.status(400);
         res.json({"error": "not enough products in inventory to satisfy request"});
     } else {
         if (carts.hasOwnProperty(cartId)){
             carts[cartId].products[productId].quantity = quantity;
             res.json({"success": "updated"});
         } else {
+            res.status(404);
             res.json({"error": "Could not find cart or product"});
         }
     }
@@ -141,6 +161,36 @@ app.delete("/cart/:cartId/product/:productId/", (req, res, next) => {
         delete carts[cartId].products[productId];
         res.json({"success": "product removed from cart"});
     } else {
+        res.status(404);
         res.json({"error": "could not find cart or product"});
+    }
+});
+
+app.get("/cart/:cartId/checkout/", (req, res, next) => {
+    // Checkout the cart
+    var cartId = req.params.cartId;
+    var can_checkout = true;
+    if (!carts.hasOwnProperty(cartId)){
+        res.status(404);
+        res.json({"error": "could not find cart or product"});
+    } else {
+        for (var productId in carts[cartId].products){
+            if (!inventory.hasOwnProperty(productId) || carts[cartId].products[productId].quantity > inventory[productId].quantity){
+                // Check whether product is valid or quantity in cart is more than inventory
+                can_checkout = false;
+                break;
+            }
+        }
+        if (can_checkout){
+            // If can checkout, remove the products from inventory and remove cart
+            carts[cartId].status = 'Ordered';
+            for (var productId in carts[cartId].products){
+                inventory[productId].quantity -= carts[cartId].products[productId].quantity;
+            }
+            res.json({"success": "cart checked out"});
+        } else {
+            res.status(400);
+            res.json({"error": "could not checkout"});
+        }
     }
 });

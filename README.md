@@ -29,7 +29,19 @@ Cart workflow is located in the `docs` dir, both a PlantUML as well as the resul
 
 ### Api Endpoints
 * localhost:3000/inventory - Get only; View available inventory
+* localhost:3000/inventory/:productId/ - Get only; View signle item in inventory
 * localhost:3000/cart - Get, Post; View all carts, initialize a cart and return id
 * localhost:3000/cart/:cartId/ - Get, Put, Delete; View a cart, Update a cart's status, and Delete the cart
 * localhost:3000/cart/:cartId/product/:productId/ - Get, Put, Delete; View a product inside a cart, Add a product to the cart, Update the quantity of products in the cart, and Delete product in the cart
   * quantity is sent in via data payload in the body
+* localhost:3000/cart/:cartId/checkout/ - Get only; Process cart and goes through checkout
+
+### Design choices
+* I chose to go with express since I was familar with it, and setting up an app is pretty quick and straighforward
+* I decided to use uuidv4 for the cart id's so I wouldnt have to keep track of primary keys and could just generate them randomly.
+
+### TODO
+* Split up index.js file into a few smaller functions to reduce the amount of repatition is in the code
+* Add a tests
+* Add a way to associate carts with api requests so remembering id's could just be a fall back
+* Add more error handling
